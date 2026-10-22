@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f5ef">
+  <title>온기커피 | 오늘의 커피</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #29251f;
+      --muted: #81796e;
+      --paper: #fbfaf7;
+      --white: #fff;
+      --line: #e9e4db;
+      --coffee: #563c2d;
+      --coffee-dark: #3d2a20;
+      --cream: #f1e8dc;
+      --green: #52694c;
+      --red: #a24d3c;
+      --shadow: 0 12px 34px rgba(59, 43, 30, .07);
+      font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); }
+    button { color: inherit; font: inherit; cursor: pointer; }
+    .topbar { height: 76px; display:flex; align-items:center; justify-content:space-between; padding:0 max(5vw,24px); background:rgba(255,255,255,.9); border-bottom:1px solid var(--line); }
+    .brand { display:flex; align-items:center; gap:11px; font-family: Georgia, serif; font-size:21px; font-weight:700; letter-spacing:-.7px; }
+    .brand-mark { display:grid; place-items:center; width:36px; height:36px; border-radius:50%; background:var(--coffee); color:#fff; font-size:17px; }
+    .nav { display:flex; align-items:center; gap:8px; }
+    .nav button { border:0; background:transparent; color:var(--muted); padding:10px 16px; border-radius:99px; font-size:14px; font-weight:650; }
+    .nav button.active { background:var(--coffee); color:#fff; }
+    main { max-width:1150px; margin:auto; padding:34px 24px 76px; }
+    .hero { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; padding:20px 0 30px; }
+    .eyebrow { color:var(--green); font-size:12px; font-weight:800; letter-spacing:1.7px; text-transform:uppercase; }
+    h1 { margin:9px 0 8px; font-family:Georgia, "Malgun Gothic", serif; font-size:clamp(30px,4vw,43px); letter-spacing:-1.6px; }
+    .hero p { margin:0; color:var(--muted); font-size:15px; }
+    .open-pill { display:flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid #dfe5d9; border-radius:99px; color:var(--green); background:#f5f8f2; font-size:12px; font-weight:700; white-space:nowrap; }
+    .open-pill:before { content:""; width:7px; height:7px; border-radius:50%; background:#70a366; }
+    .layout { display:grid; grid-template-columns:minmax(0, 1fr) 330px; align-items:start; gap:27px; }
+    .section-heading { display:flex; align-items:baseline; justify-content:space-between; margin:2px 0 15px; }
+    h2 { margin:0; font-size:19px; letter-spacing:-.5px; }
+    .section-heading span { color:var(--muted); font-size:12px; }
+    .menu-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .menu-card { overflow:hidden; border:1px solid var(--line); border-radius:15px; background:var(--white); box-shadow:0 3px 12px rgba(50,40,30,.025); transition:transform .18s,box-shadow .18s; }
+    .menu-card:hover { transform:translateY(-2px); box-shadow:var(--shadow); }
+    .drink-art { height:132px; display:grid; place-items:center; position:relative; background:linear-gradient(145deg,#f3ede3,#e8ddcf); }
+    .drink-art:after { content:""; position:absolute; inset:0; opacity:.2; background-image:radial-gradient(#8d7255 .7px,transparent .7px); background-size:12px 12px; }
+    .drink-icon { z-index:1; display:grid; place-items:center; width:85px; height:85px; border:1px solid rgba(255,255,255,.75); border-radius:50%; background:rgba(255,255,255,.46); font-size:44px; filter:drop-shadow(0 7px 5px rgba(63,42,24,.12)); }
+    .stock-tag { position:absolute; z-index:2; top:12px; right:12px; padding:6px 9px; border-radius:99px; color:var(--green); background:rgba(255,255,255,.9); font-size:11px; font-weight:750; }
+    .stock-tag.sold { color:var(--red); background:#fff4f1; }
+    .menu-body { padding:15px 16px 16px; }
+    .menu-title { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+    .menu-title h3 { margin:0; font-size:16px; }
+    .price { font-size:14px; font-weight:750; white-space:nowrap; }
+    .description { min-height:18px; margin:6px 0 13px; color:var(--muted); font-size:12px; }
+    .menu-meta { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin:-4px 0 13px; }
+    .calories { color:#675d52; font-size:11px; font-weight:700; }
+    .temperature-list { display:flex; gap:4px; }
+    .temperature { padding:3px 7px; border:1px solid #e8e2d9; border-radius:99px; color:#675d52; background:#fbfaf7; font-size:9px; font-weight:800; letter-spacing:.3px; }
+    .temperature.unavailable { color:#aaa39a; background:#f2f0ed; text-decoration:line-through; }
+    .options { display:flex; gap:8px; margin-bottom:13px; }
+    .option { display:flex; gap:6px; align-items:center; color:#645c52; font-size:12px; cursor:pointer; }
+    .option input { width:14px; height:14px; accent-color:var(--coffee); margin:0; }
+    .add-button { width:100%; padding:10px 12px; border:1px solid var(--coffee); border-radius:8px; color:#fff; background:var(--coffee); font-size:13px; font-weight:750; transition:background .15s; }
+    .add-button:hover:not(:disabled) { background:var(--coffee-dark); }
+    .add-button:disabled { border-color:#ded8d0; color:#a49d94; background:#f1efec; cursor:not-allowed; }
+    .cart { position:sticky; top:18px; border:1px solid var(--line); border-radius:15px; background:#fff; box-shadow:var(--shadow); }
+    .cart-head { display:flex; align-items:center; justify-content:space-between; padding:19px 19px 15px; border-bottom:1px solid #f0ece6; }
+    .cart-head h2 { display:flex; align-items:center; gap:9px; font-size:17px; }
+    .count { display:grid; place-items:center; min-width:22px; height:22px; padding:0 6px; border-radius:20px; color:#fff; background:var(--coffee); font-size:11px; }
+    .cart-items { padding:3px 19px; }
+    .empty { padding:34px 8px 37px; color:var(--muted); text-align:center; font-size:13px; line-height:1.8; }
+    .empty-icon { display:block; margin-bottom:8px; font-size:27px; }
+    .cart-item { display:flex; justify-content:space-between; gap:10px; padding:14px 0; border-bottom:1px solid #f1ede8; }
+    .cart-item:last-child { border-bottom:0; }
+    .item-info { min-width:0; }
+    .item-name { font-size:13px; font-weight:750; }
+    .item-options { margin-top:4px; color:var(--muted); font-size:11px; }
+    .item-controls { display:flex; align-items:center; gap:7px; margin-top:9px; }
+    .qty-btn { display:grid; place-items:center; width:23px; height:23px; border:1px solid var(--line); border-radius:6px; background:white; font-size:14px; }
+    .qty { min-width:14px; text-align:center; font-size:12px; }
+    .item-end { display:flex; flex-direction:column; align-items:flex-end; justify-content:space-between; }
+    .item-price { font-size:13px; font-weight:750; white-space:nowrap; }
+    .remove { padding:2px 0; border:0; color:#a69e94; background:none; font-size:11px; text-decoration:underline; }
+    .cart-bottom { padding:15px 19px 19px; border-top:1px solid #f0ece6; }
+    .subtotal { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; font-size:13px; }
+    .subtotal strong { font-size:19px; }
+    .order-button { width:100%; padding:13px; border:0; border-radius:9px; color:#fff; background:var(--coffee); font-weight:750; }
+    .order-button:hover:not(:disabled) { background:var(--coffee-dark); }
+    .order-button:disabled { color:#a49d94; background:#efede9; cursor:not-allowed; }
+    .notice { min-height:20px; margin:0 0 8px; color:var(--red); font-size:12px; line-height:1.5; }
+    .footnote { margin:11px 0 0; color:#a39b91; text-align:center; font-size:10px; }
+    .admin-head { display:flex; justify-content:space-between; align-items:flex-end; margin:18px 0 24px; }
+    .admin-head h1 { margin-bottom:5px; }
+    .admin-date { color:var(--muted); font-size:12px; }
+    .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:25px; }
+    .stat { padding:18px 20px; border:1px solid var(--line); border-radius:12px; background:#fff; }
+    .stat span { display:block; margin-bottom:10px; color:var(--muted); font-size:12px; }
+    .stat strong { font-family:Georgia,serif; font-size:27px; }
+    .admin-grid { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(280px,.8fr); gap:20px; align-items:start; }
+    .panel { border:1px solid var(--line); border-radius:14px; background:#fff; }
+    .panel-head { display:flex; align-items:center; justify-content:space-between; padding:17px 19px; border-bottom:1px solid #f0ece6; }
+    .panel-head h2 { font-size:16px; }
+    .panel-head span { color:var(--muted); font-size:11px; }
+    .orders { padding:0 18px; }
+    .order-card { padding:17px 0; border-bottom:1px solid #f0ece6; }
+    .order-card:last-child { border-bottom:0; }
+    .order-top { display:flex; justify-content:space-between; gap:12px; align-items:center; }
+    .order-id { font-size:13px; font-weight:800; }
+    .order-time { margin-left:8px; color:var(--muted); font-size:11px; font-weight:400; }
+    .status { padding:5px 9px; border-radius:99px; color:#76563d; background:#f6eee5; font-size:10px; font-weight:750; white-space:nowrap; }
+    .status.done { color:var(--green); background:#edf3e9; }
+    .order-lines { margin:11px 0; color:#665f56; font-size:12px; line-height:1.8; }
+    .order-bottom { display:flex; justify-content:space-between; align-items:center; }
+    .order-total { font-size:13px; font-weight:800; }
+    .complete-button { padding:7px 11px; border:1px solid #d8e1d2; border-radius:7px; color:var(--green); background:#f5f8f2; font-size:11px; font-weight:750; }
+    .complete-button:hover { background:#eaf1e5; }
+    .no-orders { padding:42px 15px; color:var(--muted); text-align:center; font-size:13px; }
+    .inventory { padding:4px 18px 12px; }
+    .inventory-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 0; border-bottom:1px solid #f1ede8; }
+    .inventory-row:last-child { border-bottom:0; }
+    .inventory-name { font-size:12px; font-weight:700; }
+    .inventory-status { display:flex; align-items:center; gap:8px; color:var(--green); font-size:11px; }
+    .inventory-status.low { color:var(--red); }
+    .inventory-status strong { color:var(--ink); font-size:13px; }
+    .storage-error { margin:22px auto; max-width:1150px; padding:14px 18px; border:1px solid #e8bdb3; border-radius:9px; color:#853a2d; background:#fff1ed; font-size:13px; line-height:1.6; }
+    .toast { position:fixed; z-index:10; left:50%; bottom:25px; transform:translate(-50%,15px); padding:13px 19px; border-radius:10px; color:#fff; background:#302820; box-shadow:var(--shadow); font-size:13px; opacity:0; pointer-events:none; transition:opacity .2s,transform .2s; }
+    .toast.show { transform:translate(-50%,0); opacity:1; }
+    [hidden] { display:none !important; }
+    @media (max-width:800px) {
+      main { padding:24px 18px 55px; }
+      .layout { grid-template-columns:1fr; }
+      .cart { position:static; }
+      .admin-grid { grid-template-columns:1fr; }
+    }
+    @media (max-width:520px) {
+      .topbar { height:64px; padding:0 16px; }
+      .brand { font-size:18px; }
+      .nav { gap:2px; }
+      .nav button { padding:9px 11px; font-size:12px; }
+      main { padding:20px 14px 45px; }
+      .hero { align-items:flex-start; padding:15px 0 22px; }
+      .hero p { max-width:240px; font-size:13px; line-height:1.6; }
+      .open-pill { padding:8px 10px; font-size:10px; }
+      .menu-grid { gap:9px; }
+      .drink-art { height:104px; }
+      .drink-icon { width:69px; height:69px; font-size:35px; }
+      .menu-body { padding:12px 11px; }
+      .menu-title { align-items:flex-start; flex-direction:column; gap:4px; }
+      .menu-title h3 { font-size:14px; }
+      .price { font-size:12px; }
+      .description { min-height:30px; margin:6px 0 10px; font-size:10px; }
+      .menu-meta { gap:5px; margin:-3px 0 10px; }
+      .calories { font-size:10px; }
+      .temperature { padding:3px 5px; font-size:8px; }
+      .options { flex-wrap:wrap; gap:7px; }
+      .option { font-size:10px; }
+      .add-button { padding:9px 7px; font-size:11px; }
+      .stats { gap:7px; }
+      .stat { padding:14px 11px; }
+      .stat span { font-size:10px; }
+      .stat strong { font-size:21px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">온</span> ongi coffee</div>
+    <nav class="nav" aria-label="화면 선택">
+      <button id="customer-tab" class="active" type="button" aria-current="page">메뉴 주문</button>
+      <button id="admin-tab" type="button">매장 관리</button>
+    </nav>
+  </header>
+  <div id="storage-error" class="storage-error" role="alert" hidden></div>
+  <main id="customer-view">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">A little warmth in your day</div>
+        <h1>오늘의 커피, 온기 한 잔</h1>
+        <p>정성껏 준비한 커피를 지금 주문해 보세요.</p>
+      </div>
+      <div class="open-pill">지금 주문 가능</div>
+    </section>
+    <div class="layout">
+      <section aria-labelledby="menu-heading">
+        <div class="section-heading"><h2 id="menu-heading">음료 메뉴</h2><span>칼로리는 1잔 기준 참고값입니다</span></div>
+        <div id="menu-grid" class="menu-grid"></div>
+      </section>
+      <aside class="cart" aria-labelledby="cart-heading">
+        <div class="cart-head"><h2 id="cart-heading">주문 바구니 <span id="cart-count" class="count">0</span></h2><span style="color:var(--muted);font-size:11px">ORDER</span></div>
+        <div id="cart-items" class="cart-items"></div>
+        <div class="cart-bottom">
+          <div id="notice" class="notice" role="status" aria-live="polite"></div>
+          <div class="subtotal"><span>총 주문 금액</span><strong id="cart-total">0원</strong></div>
+          <button id="order-button" class="order-button" type="button" disabled>주문하기</button>
+          <p class="footnote">주문 후에는 매장 관리에서 제조 현황을 확인할 수 있어요.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+  <main id="admin-view" hidden>
+    <section class="admin-head">
+      <div><div class="eyebrow">STORE DASHBOARD</div><h1>매장 관리</h1><p style="margin:0;color:var(--muted);font-size:13px">주문 현황과 오늘의 재고를 확인하세요.</p></div>
+      <div id="today-date" class="admin-date"></div>
+    </section>
+    <section class="stats" aria-label="매장 요약">
+      <div class="stat"><span>전체 주문</span><strong id="stat-orders">0</strong></div>
+      <div class="stat"><span>제조 대기</span><strong id="stat-pending">0</strong></div>
+      <div class="stat"><span>오늘 매출</span><strong id="stat-sales">0원</strong></div>
+    </section>
+    <div class="admin-grid">
+      <section class="panel">
+        <div class="panel-head"><h2>주문 현황</h2><span>최신 주문순</span></div>
+        <div id="orders-list" class="orders"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>메뉴별 재고</h2><span>실시간 현황</span></div>
+        <div id="inventory-list" class="inventory"></div>
+      </section>
+    </div>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+    (() => {
+      "use strict";
+      const STORAGE_KEY = "ongi-coffee-app-v1";
+      const initialMenus = [
+        { id: "americano", name: "아메리카노", price: 3000, stock: 10, icon: "☕", description: "깔끔한 밸런스의 시그니처 블렌드", calories: 10, temperatures: ["HOT", "ICE"] },
+        { id: "cafe-latte", name: "카페라떼", price: 3800, stock: 10, icon: "🥛", description: "고소한 우유와 진한 에스프레소", calories: 180, temperatures: ["HOT", "ICE"] },
+        { id: "vanilla-latte", name: "바닐라라떼", price: 4300, stock: 10, icon: "🍦", description: "은은한 바닐라 향을 더한 라떼", calories: 240, temperatures: ["HOT", "ICE"] },
+        { id: "caramel-macchiato", name: "카라멜마키아토", price: 4500, stock: 10, icon: "🍮", description: "달콤한 카라멜과 부드러운 거품", calories: 250, temperatures: ["HOT", "ICE"] },
+        { id: "choco-latte", name: "초코라떼", price: 4000, stock: 10, icon: "🍫", description: "진한 초콜릿의 달콤한 한 잔", calories: 320, temperatures: ["HOT", "ICE"] },
+        { id: "cappuccino", name: "카푸치노", price: 4000, stock: 10, icon: "☁️", description: "풍성한 우유 거품과 에스프레소", calories: 130, temperatures: ["HOT", "ICE"] },
+        { id: "cold-brew", name: "콜드브루", price: 3800, stock: 10, icon: "🧊", description: "차갑게 오래 추출해 부드러운 커피", calories: 5, temperatures: ["ICE"] },
+        { id: "matcha-latte", name: "말차라떼", price: 4500, stock: 10, icon: "🍵", description: "쌉쌀한 말차와 부드러운 우유", calories: 220, temperatures: ["HOT", "ICE"] },
+        { id: "strawberry-latte", name: "딸기라떼", price: 4800, stock: 10, icon: "🍓", description: "달콤한 딸기와 신선한 우유", calories: 290, temperatures: ["ICE"] },
+        { id: "lemon-ade", name: "레몬에이드", price: 4300, stock: 10, icon: "🍋", description: "상큼한 레몬으로 기분 전환", calories: 170, temperatures: ["ICE"] }
+      ];
+      const $ = (id) => document.getElementById(id);
+      let state;
+      let storageUnavailable = false;
+      let toastTimer;
+      const won = (amount) => `${amount.toLocaleString("ko-KR")}원`;
+      const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[char]);
+      const validState = (value) => value && Array.isArray(value.menus) &&
+        value.menus.every((menu) =>
+          typeof menu.id === "string" && Number.isInteger(menu.stock) && menu.stock >= 0
+        ) && Array.isArray(value.cart) && Array.isArray(value.orders);
+
+      function restoreState(value) {
+        if (!validState(value)) throw new Error("저장 데이터의 형식이 올바르지 않습니다.");
+        const savedMenus = new Map(value.menus.map((menu) => [menu.id, menu]));
+        if ([...savedMenus.keys()].some((id) => !initialMenus.some((menu) => menu.id === id))) {
+          throw new Error("저장된 메뉴 목록을 현재 메뉴와 연결할 수 없습니다.");
+        }
+        return {
+          menus: initialMenus.map((menu) => ({
+            ...menu,
+            stock: savedMenus.get(menu.id)?.stock ?? menu.stock
+          })),
+          cart: value.cart,
+          orders: value.orders
+        };
+      }
+
+      function setError(message) {
+        storageUnavailable = true;
+        $("storage-error").hidden = false;
+        $("storage-error").textContent = message;
+        document.querySelectorAll("button").forEach((button) => { button.disabled = true; });
+      }
+
+      function save(nextState) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
+          state = nextState;
+          return true;
+        } catch (error) {
+          console.error("온기커피 데이터를 저장하지 못했습니다.", error);
+          showToast("저장에 실패했어요. 브라우저 저장 공간을 확인해 주세요.");
+          return false;
+        }
+      }
+
+      function update(mutator, successMessage) {
+        if (storageUnavailable) return;
+        const next = structuredClone(state);
+        mutator(next);
+        if (save(next)) {
+          render();
+          if (successMessage) showToast(successMessage);
+        }
+      }
+
+      function showToast(message) {
+        const toast = $("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove("show"), 2500);
+      }
+
+      function renderMenu() {
+        $("menu-grid").innerHTML = state.menus.map((menu) => {
+          const soldOut = menu.stock === 0;
+          return `<article class="menu-card" data-menu="${escapeHtml(menu.id)}">
+            <div class="drink-art"><span class="drink-icon" aria-hidden="true">${menu.icon}</span>
+              <span class="stock-tag ${soldOut ? "sold" : ""}">${soldOut ? "품절" : `오늘 ${menu.stock}잔 남음`}</span>
+            </div>
+            <div class="menu-body">
+              <div class="menu-title"><h3>${escapeHtml(menu.name)}</h3><span class="price">${won(menu.price)}</span></div>
+              <p class="description">${escapeHtml(menu.description)}</p>
+              <div class="menu-meta">
+                <span class="calories">${menu.calories} kcal</span>
+                <span class="temperature-list" aria-label="온도별 주문 가능 여부">
+                  ${["HOT", "ICE"].map((temperature) => {
+                    const available = menu.temperatures.includes(temperature);
+                    return `<span class="temperature ${available ? "" : "unavailable"}">${temperature} ${available ? "가능" : "불가"}</span>`;
+                  }).join("")}
+                </span>
+              </div>
+              <div class="options">
+                <label class="option"><input type="checkbox" data-option="shot" ${soldOut ? "disabled" : ""}> 샷 추가 <b>+500원</b></label>
+                <label class="option"><input type="checkbox" data-option="syrup" ${soldOut ? "disabled" : ""}> 시럽 추가 <b>+0원</b></label>
+              </div>
+              <button class="add-button" type="button" data-add="${escapeHtml(menu.id)}" ${soldOut ? "disabled" : ""}>${soldOut ? "품절된 메뉴예요" : "바구니에 담기"}</button>
+            </div>
+          </article>`;
+        }).join("");
+      }
+
+      function renderCart() {
+        const count = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+        const total = state.cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+        $("cart-count").textContent = count;
+        $("cart-total").textContent = won(total);
+        $("order-button").disabled = count === 0 || storageUnavailable;
+        if (state.cart.length === 0) {
+          $("cart-items").innerHTML = '<div class="empty"><span class="empty-icon">🛍️</span>아직 담긴 메뉴가 없어요.<br>마음에 드는 커피를 골라보세요.</div>';
+        } else {
+          $("cart-items").innerHTML = state.cart.map((item) => {
+            const options = [item.shot ? "샷 추가" : "", item.syrup ? "시럽 추가" : ""].filter(Boolean).join(" · ") || "기본";
+            return `<div class="cart-item">
+              <div class="item-info"><div class="item-name">${escapeHtml(item.name)}</div><div class="item-options">${options}</div>
+                <div class="item-controls">
+                  <button class="qty-btn" type="button" data-quantity="${escapeHtml(item.key)}" data-delta="-1" aria-label="${escapeHtml(item.name)} 수량 줄이기">−</button>
+                  <span class="qty">${item.quantity}</span>
+                  <button class="qty-btn" type="button" data-quantity="${escapeHtml(item.key)}" data-delta="1" aria-label="${escapeHtml(item.name)} 수량 늘리기">+</button>
+                </div>
+              </div>
+              <div class="item-end"><span class="item-price">${won(item.unitPrice * item.quantity)}</span>
+                <button class="remove" type="button" data-remove="${escapeHtml(item.key)}">삭제</button>
+              </div>
+            </div>`;
+          }).join("");
+        }
+      }
+
+      function renderAdmin() {
+        const today = new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
+        $("today-date").textContent = today;
+        const todayKey = new Date().toLocaleDateString("ko-CA");
+        const todayOrders = state.orders.filter((order) => new Date(order.createdAt).toLocaleDateString("ko-CA") === todayKey);
+        const pending = state.orders.filter((order) => order.status === "pending").length;
+        $("stat-orders").textContent = todayOrders.length;
+        $("stat-pending").textContent = pending;
+        $("stat-sales").textContent = won(todayOrders.reduce((sum, order) => sum + order.total, 0));
+        const sortedOrders = [...state.orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        $("orders-list").innerHTML = sortedOrders.length ? sortedOrders.map((order) => {
+          const lines = order.items.map((item) => `${escapeHtml(item.name)}${item.shot ? " (샷 추가)" : ""}${item.syrup ? " (시럽 추가)" : ""} × ${item.quantity}`).join("<br>");
+          const time = new Date(order.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+          return `<article class="order-card">
+            <div class="order-top"><div class="order-id">${escapeHtml(order.id)}<span class="order-time">${time}</span></div>
+              <span class="status ${order.status === "done" ? "done" : ""}">${order.status === "done" ? "제조 완료" : "제조 대기"}</span>
+            </div>
+            <div class="order-lines">${lines}</div>
+            <div class="order-bottom"><span class="order-total">${won(order.total)}</span>
+              ${order.status === "pending" ? `<button class="complete-button" type="button" data-complete="${escapeHtml(order.id)}">제조 완료 처리</button>` : '<span style="color:var(--green);font-size:11px">✓ 준비 완료</span>'}
+            </div>
+          </article>`;
+        }).join("") : '<div class="no-orders">아직 접수된 주문이 없습니다.<br>새 주문이 들어오면 여기에 표시돼요.</div>';
+        $("inventory-list").innerHTML = state.menus.map((menu) => {
+          const low = menu.stock <= 2;
+          return `<div class="inventory-row"><span class="inventory-name">${escapeHtml(menu.name)}</span>
+            <span class="inventory-status ${menu.stock === 0 ? "low" : ""}"><strong>${menu.stock}잔</strong>${menu.stock === 0 ? "품절" : low ? "재고 부족" : "판매 중"}</span>
+          </div>`;
+        }).join("");
+      }
+
+      function render() {
+        renderMenu();
+        renderCart();
+        renderAdmin();
+      }
+
+      function switchView(view) {
+        const isAdmin = view === "admin";
+        $("customer-view").hidden = isAdmin;
+        $("admin-view").hidden = !isAdmin;
+        $("customer-tab").classList.toggle("active", !isAdmin);
+        $("admin-tab").classList.toggle("active", isAdmin);
+        $("customer-tab").toggleAttribute("aria-current", !isAdmin);
+        $("admin-tab").toggleAttribute("aria-current", isAdmin);
+      }
+
+      function addToCart(menuId, card) {
+        const menu = state.menus.find((item) => item.id === menuId);
+        if (!menu || menu.stock <= 0) return;
+        const shot = card.querySelector('[data-option="shot"]').checked;
+        const syrup = card.querySelector('[data-option="syrup"]').checked;
+        const key = `${menuId}|${shot ? 1 : 0}|${syrup ? 1 : 0}`;
+        update((next) => {
+          const existing = next.cart.find((item) => item.key === key);
+          if (existing) existing.quantity += 1;
+          else next.cart.push({
+            key, menuId, name: menu.name, shot, syrup,
+            unitPrice: menu.price + (shot ? 500 : 0), quantity: 1
+          });
+        }, `${menu.name}을(를) 바구니에 담았어요.`);
+        card.querySelectorAll('input[type="checkbox"]').forEach((input) => { input.checked = false; });
+      }
+
+      function placeOrder() {
+        if (state.cart.length === 0) return;
+        const required = new Map();
+        state.cart.forEach((item) => required.set(item.menuId, (required.get(item.menuId) || 0) + item.quantity));
+        const unavailable = [...required].map(([id, quantity]) => {
+          const menu = state.menus.find((entry) => entry.id === id);
+          return menu && menu.stock < quantity ? `${menu.name} (재고 ${menu.stock}잔)` : null;
+        }).filter(Boolean);
+        if (unavailable.length) {
+          $("notice").textContent = `재고가 부족해요: ${unavailable.join(", ")}. 수량을 확인해 주세요.`;
+          return;
+        }
+        const now = new Date();
+        const order = {
+          id: `A${now.getTime().toString().slice(-6)}`,
+          createdAt: now.toISOString(),
+          status: "pending",
+          items: state.cart.map(({ menuId, name, shot, syrup, unitPrice, quantity }) => ({ menuId, name, shot, syrup, unitPrice, quantity })),
+          total: state.cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
+        };
+        update((next) => {
+          for (const [menuId, quantity] of required) {
+            const menu = next.menus.find((item) => item.id === menuId);
+            menu.stock -= quantity;
+          }
+          next.orders.push(order);
+          next.cart = [];
+        }, `주문이 접수됐어요! 주문 번호 ${order.id}`);
+        $("notice").textContent = "";
+      }
+
+      document.addEventListener("click", (event) => {
+        const target = event.target.closest("button");
+        if (!target || storageUnavailable) return;
+        if (target.id === "customer-tab") switchView("customer");
+        if (target.id === "admin-tab") switchView("admin");
+        if (target.dataset.add) addToCart(target.dataset.add, target.closest(".menu-card"));
+        if (target.dataset.remove) update((next) => {
+          next.cart = next.cart.filter((item) => item.key !== target.dataset.remove);
+        });
+        if (target.dataset.quantity) update((next) => {
+          const item = next.cart.find((entry) => entry.key === target.dataset.quantity);
+          if (!item) return;
+          item.quantity += Number(target.dataset.delta);
+          if (item.quantity <= 0) next.cart = next.cart.filter((entry) => entry.key !== target.dataset.quantity);
+        });
+        if (target.id === "order-button") placeOrder();
+        if (target.dataset.complete) update((next) => {
+          const order = next.orders.find((entry) => entry.id === target.dataset.complete);
+          if (order && order.status === "pending") order.status = "done";
+        }, "제조 완료로 변경했어요.");
+      });
+
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored === null) {
+          state = { menus: initialMenus, cart: [], orders: [] };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } else {
+          state = restoreState(JSON.parse(stored));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+        render();
+      } catch (error) {
+        console.error("온기커피 데이터를 불러오지 못했습니다.", error);
+        setError("저장된 앱 데이터를 읽을 수 없습니다. 브라우저 저장 공간을 확인해 주세요. 데이터는 초기화하지 않았습니다.");
+      }
+    })();
+  </script>
+</body>
+</html>
