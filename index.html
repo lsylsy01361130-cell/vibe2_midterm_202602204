@@ -48,7 +48,7 @@
     .section-heading { display:flex; align-items:baseline; justify-content:space-between; margin:2px 0 15px; }
     h2 { margin:0; font-size:19px; letter-spacing:-.5px; }
     .section-heading span { color:var(--muted); font-size:12px; }
-    .menu-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .menu-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:10px; }
     .order-tracker { margin:0 0 26px; padding:19px 21px; border:1px solid #d9e1d8; border-radius:18px; background:linear-gradient(125deg,rgba(255,254,249,.97),rgba(235,242,235,.96)); box-shadow:0 9px 24px rgba(68,83,74,.08); }
     .tracker-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:13px; }
     .tracker-heading h2 { font-size:17px; }
@@ -60,29 +60,37 @@
     .tracked-order-id { font-size:14px; font-weight:800; letter-spacing:.3px; }
     .tracked-status { padding:6px 10px; border-radius:99px; color:#78684e; background:#f4eddd; font-size:11px; font-weight:750; white-space:nowrap; }
     .tracked-status.done { color:#5f7b6a; background:#e9f1e8; }
-    .tracked-order-details { display:flex; justify-content:space-between; gap:12px; margin-top:9px; color:#746d62; font-size:12px; line-height:1.6; }
-    .tracked-queue { color:#5f7869; font-weight:750; white-space:nowrap; }
-    .menu-card { overflow:hidden; border:1px solid rgba(227,227,216,.94); border-radius:20px; background:rgba(255,254,250,.95); box-shadow:0 5px 18px rgba(68,83,74,.05); transition:transform .18s,box-shadow .18s; }
+    .tracked-order-details { margin-top:8px; color:#746d62; font-size:12px; line-height:1.6; }
+    .order-timeline { display:grid; margin-top:13px; }
+    .timeline-step { position:relative; display:grid; grid-template-columns:18px minmax(0,1fr); gap:10px; min-height:35px; color:#98988e; font-size:11px; }
+    .timeline-step:not(:last-child):before { position:absolute; top:14px; bottom:0; left:6px; width:2px; background:#e5e8df; content:""; }
+    .timeline-step.complete:not(:last-child):before { background:#9bad99; }
+    .timeline-marker { z-index:1; width:14px; height:14px; margin-top:1px; border:2px solid #d8ddd4; border-radius:50%; background:#fff; }
+    .timeline-step.complete .timeline-marker { border-color:#718c78; background:#718c78; box-shadow:inset 0 0 0 3px #fff; }
+    .timeline-step.current { color:#526c5d; font-weight:750; }
+    .timeline-step.current .timeline-marker { border-color:#718c78; background:#f5f7ef; box-shadow:0 0 0 3px rgba(113,140,120,.14); }
+    .timeline-label { padding-bottom:10px; }
+    .menu-card { display:grid; grid-template-columns:58px minmax(0,1fr); overflow:hidden; border:1px solid rgba(227,227,216,.94); border-radius:16px; background:rgba(255,254,250,.95); box-shadow:0 5px 18px rgba(68,83,74,.05); transition:transform .18s,box-shadow .18s; }
     .menu-card:hover { transform:translateY(-2px); box-shadow:var(--shadow); }
-    .drink-art { height:132px; display:grid; place-items:center; position:relative; background:linear-gradient(145deg,#f2e8d8,#e8ece3 55%,#dce9e2); }
-    .drink-art:after { content:""; position:absolute; inset:0; opacity:.18; background-image:radial-gradient(#9a9a7e .7px,transparent .7px); background-size:14px 14px; }
-    .drink-icon { z-index:1; display:grid; place-items:center; width:85px; height:85px; border:1px solid rgba(255,255,255,.8); border-radius:32px; background:rgba(255,255,255,.58); font-size:44px; filter:drop-shadow(0 7px 5px rgba(73,84,71,.12)); }
-    .stock-tag { position:absolute; z-index:2; top:12px; right:12px; padding:6px 9px; border-radius:99px; color:var(--green); background:rgba(255,255,255,.9); font-size:11px; font-weight:750; }
+    .drink-art { display:grid; place-items:center; position:relative; background:linear-gradient(155deg,#f2e8d8,#e8ece3 65%,#dce9e2); }
+    .drink-icon { display:grid; place-items:center; width:38px; height:38px; border:1px solid rgba(255,255,255,.8); border-radius:14px; background:rgba(255,255,255,.62); font-size:23px; }
+    .stock-tag { display:inline-flex; align-items:center; padding:4px 7px; border-radius:99px; color:var(--green); background:#edf3e9; font-size:10px; font-weight:750; white-space:nowrap; }
     .stock-tag.sold { color:var(--red); background:#fff4f1; }
-    .menu-body { padding:15px 16px 16px; }
+    .menu-body { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:5px 10px; padding:10px 13px; }
     .menu-title { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
-    .menu-title h3 { margin:0; font-size:16px; }
+    .menu-title { grid-column:1 / -1; }
+    .menu-title h3 { display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin:0; font-size:15px; }
     .price { font-size:14px; font-weight:750; white-space:nowrap; }
-    .description { min-height:18px; margin:6px 0 13px; color:var(--muted); font-size:12px; }
-    .menu-meta { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin:-4px 0 13px; }
+    .description { grid-column:1 / -1; min-height:0; margin:0 0 2px; color:var(--muted); font-size:11px; }
+    .menu-meta { grid-column:1; display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin:0; }
     .calories { color:#675d52; font-size:11px; font-weight:700; }
     .temperature-list { display:flex; gap:4px; }
     .temperature { padding:3px 7px; border:1px solid #dce4d9; border-radius:99px; color:#587465; background:#f0f5ee; font-size:9px; font-weight:800; letter-spacing:.3px; }
     .temperature.unavailable { border-color:#e8e4dd; color:#aaa79e; background:#f5f3ef; text-decoration:line-through; }
-    .options { display:flex; gap:8px; margin-bottom:13px; }
+    .options { grid-column:1; display:flex; flex-wrap:wrap; gap:8px; margin:0; }
     .option { display:flex; gap:6px; align-items:center; color:#645c52; font-size:12px; cursor:pointer; }
     .option input { width:14px; height:14px; accent-color:var(--coffee); margin:0; }
-    .add-button { width:100%; padding:10px 12px; border:1px solid #718579; border-radius:10px; color:#fff; background:linear-gradient(135deg,#8a9078,#6d8378); font-size:13px; font-weight:750; box-shadow:0 5px 12px rgba(91,105,92,.14); transition:background .15s,transform .15s; }
+    .add-button { grid-column:2; grid-row:3 / span 2; align-self:stretch; min-width:110px; padding:8px 11px; border:1px solid #718579; border-radius:10px; color:#fff; background:linear-gradient(135deg,#8a9078,#6d8378); font-size:12px; font-weight:750; box-shadow:0 5px 12px rgba(91,105,92,.14); transition:background .15s,transform .15s; }
     .add-button:hover:not(:disabled) { background:var(--coffee-dark); }
     .add-button:disabled { border-color:#ded8d0; color:#a49d94; background:#f1efec; cursor:not-allowed; }
     .cart { position:sticky; top:18px; border:1px solid rgba(227,227,216,.94); border-radius:20px; background:rgba(255,254,250,.96); box-shadow:var(--shadow); }
@@ -164,23 +172,25 @@
       .hero { align-items:flex-start; padding:15px 0 22px; }
       .hero p { max-width:240px; font-size:13px; line-height:1.6; }
       .open-pill { padding:8px 10px; font-size:10px; }
-      .menu-grid { gap:9px; }
+      .menu-grid { gap:8px; }
       .order-tracker { margin-bottom:20px; padding:15px 13px; }
       .tracked-order { padding:11px; }
       .tracked-order-details { flex-direction:column; gap:3px; }
-      .drink-art { height:104px; }
-      .drink-icon { width:69px; height:69px; font-size:35px; }
-      .menu-body { padding:12px 11px; }
-      .menu-title { align-items:flex-start; flex-direction:column; gap:4px; }
-      .menu-title h3 { font-size:14px; }
-      .price { font-size:12px; }
-      .description { min-height:30px; margin:6px 0 10px; font-size:10px; }
-      .menu-meta { gap:5px; margin:-3px 0 10px; }
+      .menu-card { grid-template-columns:48px minmax(0,1fr); border-radius:13px; }
+      .drink-icon { width:32px; height:32px; border-radius:11px; font-size:19px; }
+      .menu-body { gap:4px 7px; padding:8px 9px; }
+      .menu-title { align-items:center; }
+      .menu-title h3 { gap:5px; font-size:13px; }
+      .price { font-size:11px; }
+      .description { font-size:9px; }
+      .menu-meta { gap:4px; }
       .calories { font-size:10px; }
       .temperature { padding:3px 5px; font-size:8px; }
-      .options { flex-wrap:wrap; gap:7px; }
-      .option { font-size:10px; }
-      .add-button { padding:9px 7px; font-size:11px; }
+      .options { gap:5px; }
+      .option { gap:3px; font-size:9px; }
+      .option input { width:12px; height:12px; }
+      .stock-tag { padding:3px 5px; font-size:9px; }
+      .add-button { grid-row:3 / span 2; min-width:82px; padding:6px 7px; font-size:9px; }
       .stats { gap:7px; }
       .stat { padding:14px 11px; }
       .stat span { font-size:10px; }
@@ -265,16 +275,16 @@
       "use strict";
       const STORAGE_KEY = "ongi-coffee-app-v1";
       const initialMenus = [
-        { id: "americano", name: "아메리카노", price: 3000, stock: 12, icon: "☕", description: "깔끔한 밸런스의 시그니처 블렌드", calories: 10, temperatures: ["HOT", "ICE"] },
-        { id: "cafe-latte", name: "카페라떼", price: 3800, stock: 9, icon: "🥛", description: "고소한 우유와 진한 에스프레소", calories: 180, temperatures: ["HOT", "ICE"] },
-        { id: "vanilla-latte", name: "바닐라라떼", price: 4300, stock: 7, icon: "🍦", description: "은은한 바닐라 향을 더한 라떼", calories: 240, temperatures: ["HOT", "ICE"] },
-        { id: "caramel-macchiato", name: "카라멜마키아토", price: 4500, stock: 5, icon: "🍮", description: "달콤한 카라멜과 부드러운 거품", calories: 250, temperatures: ["HOT", "ICE"] },
-        { id: "choco-latte", name: "초코라떼", price: 4000, stock: 11, icon: "🍫", description: "진한 초콜릿의 달콤한 한 잔", calories: 320, temperatures: ["HOT", "ICE"] },
-        { id: "cappuccino", name: "카푸치노", price: 4000, stock: 8, icon: "☁️", description: "풍성한 우유 거품과 에스프레소", calories: 130, temperatures: ["HOT", "ICE"] },
-        { id: "cold-brew", name: "콜드브루", price: 3800, stock: 4, icon: "🧊", description: "차갑게 오래 추출해 부드러운 커피", calories: 5, temperatures: ["ICE"] },
-        { id: "matcha-latte", name: "말차라떼", price: 4500, stock: 6, icon: "🍵", description: "쌉쌀한 말차와 부드러운 우유", calories: 220, temperatures: ["HOT", "ICE"] },
-        { id: "strawberry-latte", name: "딸기라떼", price: 4800, stock: 3, icon: "🍓", description: "달콤한 딸기와 신선한 우유", calories: 290, temperatures: ["ICE"] },
-        { id: "lemon-ade", name: "레몬에이드", price: 4300, stock: 10, icon: "🍋", description: "상큼한 레몬으로 기분 전환", calories: 170, temperatures: ["ICE"] }
+        { id: "americano", name: "아메리카노", price: 3000, stock: 12, icon: "☕", category: "coffee", description: "깔끔한 밸런스의 시그니처 블렌드", calories: 10, temperatures: ["HOT", "ICE"] },
+        { id: "cafe-latte", name: "카페라떼", price: 3800, stock: 9, icon: "☕", category: "coffee", description: "고소한 우유와 진한 에스프레소", calories: 180, temperatures: ["HOT", "ICE"] },
+        { id: "vanilla-latte", name: "바닐라라떼", price: 4300, stock: 7, icon: "☕", category: "coffee", description: "은은한 바닐라 향을 더한 라떼", calories: 240, temperatures: ["HOT", "ICE"] },
+        { id: "caramel-macchiato", name: "카라멜마키아토", price: 4500, stock: 5, icon: "☕", category: "coffee", description: "달콤한 카라멜과 부드러운 거품", calories: 250, temperatures: ["HOT", "ICE"] },
+        { id: "choco-latte", name: "초코라떼", price: 4000, stock: 11, icon: "🍰", category: "dessert", description: "진한 초콜릿의 달콤한 한 잔", calories: 320, temperatures: ["HOT", "ICE"] },
+        { id: "cappuccino", name: "카푸치노", price: 4000, stock: 8, icon: "☕", category: "coffee", description: "풍성한 우유 거품과 에스프레소", calories: 130, temperatures: ["HOT", "ICE"] },
+        { id: "cold-brew", name: "콜드브루", price: 3800, stock: 4, icon: "☕", category: "coffee", description: "차갑게 오래 추출해 부드러운 커피", calories: 5, temperatures: ["ICE"] },
+        { id: "matcha-latte", name: "말차라떼", price: 4500, stock: 6, icon: "🍰", category: "dessert", description: "쌉쌀한 말차와 부드러운 우유", calories: 220, temperatures: ["HOT", "ICE"] },
+        { id: "strawberry-latte", name: "딸기라떼", price: 4800, stock: 3, icon: "🍰", category: "dessert", description: "달콤한 딸기와 신선한 우유", calories: 290, temperatures: ["ICE"] },
+        { id: "lemon-ade", name: "레몬에이드", price: 4300, stock: 10, icon: "🍰", category: "dessert", description: "상큼한 레몬으로 기분 전환", calories: 170, temperatures: ["ICE"] }
       ];
       const $ = (id) => document.getElementById(id);
       let state;
@@ -351,11 +361,9 @@
         $("menu-grid").innerHTML = state.menus.map((menu) => {
           const soldOut = menu.stock === 0;
           return `<article class="menu-card" data-menu="${escapeHtml(menu.id)}">
-            <div class="drink-art"><span class="drink-icon" aria-hidden="true">${menu.icon}</span>
-              <span class="stock-tag ${soldOut ? "sold" : ""}">${soldOut ? "품절" : `오늘 ${menu.stock}잔 남음`}</span>
-            </div>
+            <div class="drink-art" aria-hidden="true"><span class="drink-icon">${menu.category === "dessert" ? "🍰" : "☕"}</span></div>
             <div class="menu-body">
-              <div class="menu-title"><h3>${escapeHtml(menu.name)}</h3><span class="price">${won(menu.price)}</span></div>
+              <div class="menu-title"><h3>${escapeHtml(menu.name)} <span class="stock-tag ${soldOut ? "sold" : ""}">${soldOut ? "품절" : `오늘 ${menu.stock}잔`}</span></h3><span class="price">${won(menu.price)}</span></div>
               <p class="description">${escapeHtml(menu.description)}</p>
               <div class="menu-meta">
                 <span class="calories">${menu.calories} kcal</span>
@@ -405,24 +413,49 @@
           .filter((order) => state.customerOrderIds.includes(order.id))
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         $("order-tracker").hidden = ownOrders.length === 0;
-        const pendingOrders = state.orders
-          .filter((order) => order.status === "pending")
+        const activeOrders = state.orders
+          .filter((order) => order.status === "pending" || order.status === "preparing")
           .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         $("tracked-orders").innerHTML = ownOrders.map((order) => {
-          const queuePosition = order.status === "pending"
-            ? pendingOrders.findIndex((entry) => entry.id === order.id) + 1
-            : 0;
+          const queuePosition = order.status === "done"
+            ? 0
+            : activeOrders.findIndex((entry) => entry.id === order.id) + 1;
+          const currentStage = order.status === "done" ? 4 : order.status === "preparing" ? 3 : 2;
           const items = order.items.map((item) =>
             `${escapeHtml(item.name)}${item.shot ? " · 샷 추가" : ""}${item.syrup ? " · 시럽 추가" : ""} × ${item.quantity}`
           ).join(", ");
+          const stages = [
+            { label: "주문 완료", detail: "주문이 정상 접수됐어요." },
+            {
+              label: "제조 준비",
+              detail: order.status === "preparing"
+                ? "음료를 준비하고 있어요."
+                : order.status === "done"
+                  ? "제조가 완료됐어요."
+                  : `제조 대기 ${queuePosition}번째예요.`
+            },
+            {
+              label: "제조 완료",
+              detail: order.status === "done" ? "픽업해 주세요 ☕" : "제조가 끝나면 알려드릴게요."
+            }
+          ];
           return `<article class="tracked-order">
             <div class="tracked-order-top">
               <span class="tracked-order-id">주문번호 ${escapeHtml(order.id)}</span>
-              <span class="tracked-status ${order.status === "done" ? "done" : ""}">${order.status === "done" ? "제조 완료" : "제조 대기"}</span>
+              <span class="tracked-status ${order.status === "done" ? "done" : ""}">${order.status === "done" ? "제조 완료" : order.status === "preparing" ? "제조 준비 중" : "주문 접수"}</span>
             </div>
-            <div class="tracked-order-details">
-              <span>${items}</span>
-              <span class="tracked-queue">${order.status === "done" ? "픽업해 주세요 ☕" : `제조 순서 ${queuePosition}번째`}</span>
+            <div class="tracked-order-details">${items}</div>
+            <div class="order-timeline" aria-label="주문 진행 단계">
+              ${stages.map((stage, index) => {
+                const stageNumber = index + 1;
+                const stateClass = stageNumber < currentStage
+                  ? "complete"
+                  : stageNumber === currentStage ? "current" : "upcoming";
+                return `<div class="timeline-step ${stateClass}">
+                  <span class="timeline-marker" aria-hidden="true"></span>
+                  <span class="timeline-label">${stage.label} <span style="font-weight:400">${stage.detail}</span></span>
+                </div>`;
+              }).join("")}
             </div>
           </article>`;
         }).join("");
@@ -433,7 +466,7 @@
         $("today-date").textContent = today;
         const todayKey = new Date().toLocaleDateString("ko-CA");
         const todayOrders = state.orders.filter((order) => new Date(order.createdAt).toLocaleDateString("ko-CA") === todayKey);
-        const pending = state.orders.filter((order) => order.status === "pending").length;
+        const pending = state.orders.filter((order) => order.status === "pending" || order.status === "preparing").length;
         $("stat-orders").textContent = todayOrders.length;
         $("stat-pending").textContent = pending;
         $("stat-sales").textContent = won(todayOrders.reduce((sum, order) => sum + order.total, 0));
@@ -443,11 +476,15 @@
           const time = new Date(order.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
           return `<article class="order-card">
             <div class="order-top"><div class="order-id">${escapeHtml(order.id)}<span class="order-time">${time}</span></div>
-              <span class="status ${order.status === "done" ? "done" : ""}">${order.status === "done" ? "제조 완료" : "제조 대기"}</span>
+              <span class="status ${order.status === "done" ? "done" : ""}">${order.status === "done" ? "제조 완료" : order.status === "preparing" ? "제조 준비 중" : "제조 대기"}</span>
             </div>
             <div class="order-lines">${lines}</div>
             <div class="order-bottom"><span class="order-total">${won(order.total)}</span>
-              ${order.status === "pending" ? `<button class="complete-button" type="button" data-complete="${escapeHtml(order.id)}">제조 완료 처리</button>` : '<span style="color:var(--green);font-size:11px">✓ 준비 완료</span>'}
+              ${order.status === "pending"
+                ? `<button class="complete-button" type="button" data-prepare="${escapeHtml(order.id)}">제조 준비 시작</button>`
+                : order.status === "preparing"
+                  ? `<button class="complete-button" type="button" data-complete="${escapeHtml(order.id)}">제조 완료 처리</button>`
+                  : '<span style="color:var(--green);font-size:11px">✓ 준비 완료</span>'}
             </div>
           </article>`;
         }).join("") : '<div class="no-orders">아직 접수된 주문이 없습니다.<br>새 주문이 들어오면 여기에 표시돼요.</div>';
@@ -554,8 +591,12 @@
         if (target.id === "order-button") placeOrder();
         if (target.dataset.complete) update((next) => {
           const order = next.orders.find((entry) => entry.id === target.dataset.complete);
-          if (order && order.status === "pending") order.status = "done";
+          if (order && order.status === "preparing") order.status = "done";
         }, "제조 완료로 변경했어요.");
+        if (target.dataset.prepare) update((next) => {
+          const order = next.orders.find((entry) => entry.id === target.dataset.prepare);
+          if (order && order.status === "pending") order.status = "preparing";
+        }, "제조 준비를 시작했어요.");
       });
 
       window.addEventListener("storage", (event) => {
