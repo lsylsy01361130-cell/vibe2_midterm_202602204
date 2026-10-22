@@ -49,6 +49,10 @@
     h2 { margin:0; font-size:19px; letter-spacing:-.5px; }
     .section-heading span { color:var(--muted); font-size:12px; }
     .menu-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:10px; }
+    .menu-category { display:grid; gap:8px; }
+    .menu-category + .menu-category { margin-top:16px; }
+    .menu-category-heading { display:flex; align-items:center; gap:8px; margin:0 0 2px; font-size:15px; }
+    .menu-category-items { display:grid; grid-template-columns:minmax(0,1fr); gap:8px; }
     .order-tracker { margin:0 0 26px; padding:19px 21px; border:1px solid #d9e1d8; border-radius:18px; background:linear-gradient(125deg,rgba(255,254,249,.97),rgba(235,242,235,.96)); box-shadow:0 9px 24px rgba(68,83,74,.08); }
     .tracker-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:13px; }
     .tracker-heading h2 { font-size:17px; }
@@ -61,6 +65,8 @@
     .tracked-status { padding:6px 10px; border-radius:99px; color:#78684e; background:#f4eddd; font-size:11px; font-weight:750; white-space:nowrap; }
     .tracked-status.done { color:#5f7b6a; background:#e9f1e8; }
     .tracked-order-details { margin-top:8px; color:#746d62; font-size:12px; line-height:1.6; }
+    .tracked-order-footer { display:flex; justify-content:flex-end; margin-top:7px; }
+    .tracked-confirm { padding:6px 13px; border:1px solid #718c78; border-radius:8px; color:#fff; background:#718c78; font-size:11px; font-weight:750; }
     .order-timeline { display:grid; margin-top:13px; }
     .timeline-step { position:relative; display:grid; grid-template-columns:18px minmax(0,1fr); gap:10px; min-height:35px; color:#98988e; font-size:11px; }
     .timeline-step:not(:last-child):before { position:absolute; top:14px; bottom:0; left:6px; width:2px; background:#e5e8df; content:""; }
@@ -275,16 +281,20 @@
       "use strict";
       const STORAGE_KEY = "ongi-coffee-app-v1";
       const initialMenus = [
-        { id: "americano", name: "아메리카노", price: 3000, stock: 12, icon: "☕", category: "coffee", description: "깔끔한 밸런스의 시그니처 블렌드", calories: 10, temperatures: ["HOT", "ICE"] },
-        { id: "cafe-latte", name: "카페라떼", price: 3800, stock: 9, icon: "☕", category: "coffee", description: "고소한 우유와 진한 에스프레소", calories: 180, temperatures: ["HOT", "ICE"] },
-        { id: "vanilla-latte", name: "바닐라라떼", price: 4300, stock: 7, icon: "☕", category: "coffee", description: "은은한 바닐라 향을 더한 라떼", calories: 240, temperatures: ["HOT", "ICE"] },
-        { id: "caramel-macchiato", name: "카라멜마키아토", price: 4500, stock: 5, icon: "☕", category: "coffee", description: "달콤한 카라멜과 부드러운 거품", calories: 250, temperatures: ["HOT", "ICE"] },
-        { id: "choco-latte", name: "초코라떼", price: 4000, stock: 11, icon: "🍰", category: "dessert", description: "진한 초콜릿의 달콤한 한 잔", calories: 320, temperatures: ["HOT", "ICE"] },
-        { id: "cappuccino", name: "카푸치노", price: 4000, stock: 8, icon: "☕", category: "coffee", description: "풍성한 우유 거품과 에스프레소", calories: 130, temperatures: ["HOT", "ICE"] },
-        { id: "cold-brew", name: "콜드브루", price: 3800, stock: 4, icon: "☕", category: "coffee", description: "차갑게 오래 추출해 부드러운 커피", calories: 5, temperatures: ["ICE"] },
-        { id: "matcha-latte", name: "말차라떼", price: 4500, stock: 6, icon: "🍰", category: "dessert", description: "쌉쌀한 말차와 부드러운 우유", calories: 220, temperatures: ["HOT", "ICE"] },
-        { id: "strawberry-latte", name: "딸기라떼", price: 4800, stock: 3, icon: "🍰", category: "dessert", description: "달콤한 딸기와 신선한 우유", calories: 290, temperatures: ["ICE"] },
-        { id: "lemon-ade", name: "레몬에이드", price: 4300, stock: 10, icon: "🍰", category: "dessert", description: "상큼한 레몬으로 기분 전환", calories: 170, temperatures: ["ICE"] }
+        { id: "americano", name: "아메리카노", price: 3000, stock: 12, icon: "☕", category: "drink", description: "깔끔한 밸런스의 시그니처 블렌드", calories: 10, temperatures: ["HOT", "ICE"] },
+        { id: "cafe-latte", name: "카페라떼", price: 3800, stock: 9, icon: "☕", category: "drink", description: "고소한 우유와 진한 에스프레소", calories: 180, temperatures: ["HOT", "ICE"] },
+        { id: "vanilla-latte", name: "바닐라라떼", price: 4300, stock: 7, icon: "☕", category: "drink", description: "은은한 바닐라 향을 더한 라떼", calories: 240, temperatures: ["HOT", "ICE"] },
+        { id: "caramel-macchiato", name: "카라멜마키아토", price: 4500, stock: 5, icon: "☕", category: "drink", description: "달콤한 카라멜과 부드러운 거품", calories: 250, temperatures: ["HOT", "ICE"] },
+        { id: "choco-latte", name: "초코라떼", price: 4000, stock: 11, icon: "☕", category: "drink", description: "진한 초콜릿의 달콤한 한 잔", calories: 320, temperatures: ["HOT", "ICE"] },
+        { id: "cappuccino", name: "카푸치노", price: 4000, stock: 8, icon: "☕", category: "drink", description: "풍성한 우유 거품과 에스프레소", calories: 130, temperatures: ["HOT", "ICE"] },
+        { id: "cold-brew", name: "콜드브루", price: 3800, stock: 4, icon: "☕", category: "drink", description: "차갑게 오래 추출해 부드러운 커피", calories: 5, temperatures: ["ICE"] },
+        { id: "matcha-latte", name: "말차라떼", price: 4500, stock: 6, icon: "☕", category: "drink", description: "쌉쌀한 말차와 부드러운 우유", calories: 220, temperatures: ["HOT", "ICE"] },
+        { id: "strawberry-latte", name: "딸기라떼", price: 4800, stock: 3, icon: "☕", category: "drink", description: "달콤한 딸기와 신선한 우유", calories: 290, temperatures: ["ICE"] },
+        { id: "lemon-ade", name: "레몬에이드", price: 4300, stock: 10, icon: "🥤", category: "drink", description: "상큼한 레몬 탄산 음료", calories: 170, temperatures: ["ICE"] },
+        { id: "cake", name: "오늘의 케이크", price: 5500, stock: 13, icon: "🍰", category: "dessert", description: "매일 달라지는 부드럽고 달콤한 케이크", calories: 380, temperatures: [] },
+        { id: "madeleine", name: "마들렌", price: 2500, stock: 14, icon: "🧁", category: "dessert", description: "겉은 살짝 바삭하고 속은 촉촉한 구움과자", calories: 180, temperatures: [] },
+        { id: "financier", name: "휘낭시에", price: 2800, stock: 15, icon: "🍪", category: "dessert", description: "버터와 아몬드 향이 진한 프랑스 구움과자", calories: 210, temperatures: [] },
+        { id: "butter-bar", name: "버터바", price: 3500, stock: 16, icon: "🧈", category: "dessert", description: "꾸덕하고 진한 버터 풍미의 디저트", calories: 340, temperatures: [] }
       ];
       const $ = (id) => document.getElementById(id);
       let state;
@@ -299,7 +309,9 @@
           typeof menu.id === "string" && Number.isInteger(menu.stock) && menu.stock >= 0
         ) && Array.isArray(value.cart) && Array.isArray(value.orders) &&
         (value.customerOrderIds === undefined ||
-          (Array.isArray(value.customerOrderIds) && value.customerOrderIds.every((id) => typeof id === "string")));
+          (Array.isArray(value.customerOrderIds) && value.customerOrderIds.every((id) => typeof id === "string"))) &&
+        (value.customerDismissedOrderIds === undefined ||
+          (Array.isArray(value.customerDismissedOrderIds) && value.customerDismissedOrderIds.every((id) => typeof id === "string")));
 
       function restoreState(value) {
         if (!validState(value)) throw new Error("저장 데이터의 형식이 올바르지 않습니다.");
@@ -316,7 +328,8 @@
           })),
           cart: value.cart,
           orders: value.orders,
-          customerOrderIds: value.customerOrderIds || []
+          customerOrderIds: value.customerOrderIds || [],
+          customerDismissedOrderIds: value.customerDismissedOrderIds || []
         };
       }
 
@@ -358,26 +371,36 @@
       }
 
       function renderMenu() {
-        $("menu-grid").innerHTML = state.menus.map((menu) => {
+        const renderMenuItem = (menu) => {
           const soldOut = menu.stock === 0;
+          const isDrink = menu.category === "drink";
           return `<article class="menu-card" data-menu="${escapeHtml(menu.id)}">
-            <div class="drink-art" aria-hidden="true"><span class="drink-icon">${menu.category === "dessert" ? "🍰" : "☕"}</span></div>
+            <div class="drink-art" aria-hidden="true"><span class="drink-icon">${menu.icon}</span></div>
             <div class="menu-body">
-              <div class="menu-title"><h3>${escapeHtml(menu.name)} <span class="stock-tag ${soldOut ? "sold" : ""}">${soldOut ? "품절" : `오늘 ${menu.stock}잔`}</span></h3><span class="price">${won(menu.price)}</span></div>
+              <div class="menu-title"><h3>${escapeHtml(menu.name)} <span class="stock-tag ${soldOut ? "sold" : ""}">${soldOut ? "품절" : `오늘 ${menu.stock}${isDrink ? "잔" : "개"}`}</span></h3><span class="price">${won(menu.price)}</span></div>
               <p class="description">${escapeHtml(menu.description)}</p>
               <div class="menu-meta">
                 <span class="calories">${menu.calories} kcal</span>
-                <span class="temperature-list" aria-label="온도별 주문 가능 여부">
+                ${isDrink ? `<span class="temperature-list" aria-label="온도별 주문 가능 여부">
                   ${["HOT", "ICE"].map((temperature) => `<span class="temperature ${menu.temperatures.includes(temperature) ? "" : "unavailable"}">${temperature}</span>`).join("")}
-                </span>
+                </span>` : ""}
               </div>
-              <div class="options">
+              ${isDrink ? `<div class="options">
                 <label class="option"><input type="checkbox" data-option="shot" ${soldOut ? "disabled" : ""}> 샷 추가 <b>+500원</b></label>
                 <label class="option"><input type="checkbox" data-option="syrup" ${soldOut ? "disabled" : ""}> 시럽 추가 <b>+0원</b></label>
-              </div>
-              <button class="add-button" type="button" data-add="${escapeHtml(menu.id)}" ${soldOut ? "disabled" : ""}>${soldOut ? "품절된 메뉴예요" : "바구니에 담기"}</button>
+              </div>` : ""}
+              <button class="add-button" type="button" data-add="${escapeHtml(menu.id)}" ${soldOut ? "disabled" : ""}>${soldOut ? "품절" : "바구니에 담기"}</button>
             </div>
           </article>`;
+        };
+        $("menu-grid").innerHTML = ["drink", "dessert"].map((category) => {
+          const items = state.menus.filter((menu) => menu.category === category);
+          if (!items.length) return "";
+          const isDrink = category === "drink";
+          return `<section class="menu-category" aria-label="${isDrink ? "음료" : "디저트"} 메뉴">
+            <h3 class="menu-category-heading"><span aria-hidden="true">${isDrink ? "☕" : "🍰"}</span>${isDrink ? "음료" : "디저트"}</h3>
+            <div class="menu-category-items">${items.map(renderMenuItem).join("")}</div>
+          </section>`;
         }).join("");
       }
 
@@ -391,7 +414,9 @@
           $("cart-items").innerHTML = '<div class="empty"><span class="empty-icon">🛍️</span>아직 담긴 메뉴가 없어요.<br>마음에 드는 커피를 골라보세요.</div>';
         } else {
           $("cart-items").innerHTML = state.cart.map((item) => {
-            const options = [item.shot ? "샷 추가" : "", item.syrup ? "시럽 추가" : ""].filter(Boolean).join(" · ") || "기본";
+            const options = item.category === "dessert"
+              ? "디저트"
+              : [item.shot ? "샷 추가" : "", item.syrup ? "시럽 추가" : ""].filter(Boolean).join(" · ") || "기본";
             return `<div class="cart-item">
               <div class="item-info"><div class="item-name">${escapeHtml(item.name)}</div><div class="item-options">${options}</div>
                 <div class="item-controls">
@@ -410,7 +435,10 @@
 
       function renderOrderTracker() {
         const ownOrders = state.orders
-          .filter((order) => state.customerOrderIds.includes(order.id))
+          .filter((order) =>
+            state.customerOrderIds.includes(order.id) &&
+            !state.customerDismissedOrderIds.includes(order.id)
+          )
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         $("order-tracker").hidden = ownOrders.length === 0;
         const activeOrders = state.orders
@@ -422,7 +450,7 @@
             : activeOrders.findIndex((entry) => entry.id === order.id) + 1;
           const currentStage = order.status === "done" ? 4 : order.status === "preparing" ? 3 : 2;
           const items = order.items.map((item) =>
-            `${escapeHtml(item.name)}${item.shot ? " · 샷 추가" : ""}${item.syrup ? " · 시럽 추가" : ""} × ${item.quantity}`
+            `${escapeHtml(item.name)}${item.category === "dessert" ? "" : `${item.shot ? " · 샷 추가" : ""}${item.syrup ? " · 시럽 추가" : ""}`} × ${item.quantity}`
           ).join(", ");
           const stages = [
             { label: "주문 완료", detail: "주문이 정상 접수됐어요." },
@@ -457,6 +485,9 @@
                 </div>`;
               }).join("")}
             </div>
+            ${order.status === "done"
+              ? `<div class="tracked-order-footer"><button class="tracked-confirm" type="button" data-dismiss-order="${escapeHtml(order.id)}">확인</button></div>`
+              : ""}
           </article>`;
         }).join("");
       }
@@ -472,7 +503,7 @@
         $("stat-sales").textContent = won(todayOrders.reduce((sum, order) => sum + order.total, 0));
         const sortedOrders = [...state.orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         $("orders-list").innerHTML = sortedOrders.length ? sortedOrders.map((order) => {
-          const lines = order.items.map((item) => `${escapeHtml(item.name)}${item.shot ? " (샷 추가)" : ""}${item.syrup ? " (시럽 추가)" : ""} × ${item.quantity}`).join("<br>");
+          const lines = order.items.map((item) => `${escapeHtml(item.name)}${item.category === "dessert" ? "" : `${item.shot ? " (샷 추가)" : ""}${item.syrup ? " (시럽 추가)" : ""}`} × ${item.quantity}`).join("<br>");
           const time = new Date(order.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
           return `<article class="order-card">
             <div class="order-top"><div class="order-id">${escapeHtml(order.id)}<span class="order-time">${time}</span></div>
@@ -490,8 +521,9 @@
         }).join("") : '<div class="no-orders">아직 접수된 주문이 없습니다.<br>새 주문이 들어오면 여기에 표시돼요.</div>';
         $("inventory-list").innerHTML = state.menus.map((menu) => {
           const low = menu.stock <= 2;
-          return `<div class="inventory-row"><span class="inventory-name">${escapeHtml(menu.name)}</span>
-            <span class="inventory-status ${menu.stock === 0 ? "low" : ""}"><strong>${menu.stock}잔</strong>${menu.stock === 0 ? "품절" : low ? "재고 부족" : "판매 중"}</span>
+          const unit = menu.category === "dessert" ? "개" : "잔";
+          return `<div class="inventory-row"><span class="inventory-name">${menu.category === "dessert" ? "🍰" : "☕"} ${escapeHtml(menu.name)}</span>
+            <span class="inventory-status ${menu.stock === 0 ? "low" : ""}"><strong>${menu.stock}${unit}</strong>${menu.stock === 0 ? "품절" : low ? "재고 부족" : "판매 중"}</span>
           </div>`;
         }).join("");
       }
@@ -527,14 +559,14 @@
       function addToCart(menuId, card) {
         const menu = state.menus.find((item) => item.id === menuId);
         if (!menu || menu.stock <= 0) return;
-        const shot = card.querySelector('[data-option="shot"]').checked;
-        const syrup = card.querySelector('[data-option="syrup"]').checked;
+        const shot = card.querySelector('[data-option="shot"]')?.checked || false;
+        const syrup = card.querySelector('[data-option="syrup"]')?.checked || false;
         const key = `${menuId}|${shot ? 1 : 0}|${syrup ? 1 : 0}`;
         update((next) => {
           const existing = next.cart.find((item) => item.key === key);
           if (existing) existing.quantity += 1;
           else next.cart.push({
-            key, menuId, name: menu.name, shot, syrup,
+            key, menuId, name: menu.name, category: menu.category, shot, syrup,
             unitPrice: menu.price + (shot ? 500 : 0), quantity: 1
           });
         }, `${menu.name}을(를) 바구니에 담았어요.`);
@@ -547,7 +579,9 @@
         state.cart.forEach((item) => required.set(item.menuId, (required.get(item.menuId) || 0) + item.quantity));
         const unavailable = [...required].map(([id, quantity]) => {
           const menu = state.menus.find((entry) => entry.id === id);
-          return menu && menu.stock < quantity ? `${menu.name} (재고 ${menu.stock}잔)` : null;
+          return menu && menu.stock < quantity
+            ? `${menu.name} (재고 ${menu.stock}${menu.category === "dessert" ? "개" : "잔"})`
+            : null;
         }).filter(Boolean);
         if (unavailable.length) {
           $("notice").textContent = `재고가 부족해요: ${unavailable.join(", ")}. 수량을 확인해 주세요.`;
@@ -558,7 +592,7 @@
           id: `A${now.getTime().toString().slice(-6)}`,
           createdAt: now.toISOString(),
           status: "pending",
-          items: state.cart.map(({ menuId, name, shot, syrup, unitPrice, quantity }) => ({ menuId, name, shot, syrup, unitPrice, quantity })),
+          items: state.cart.map(({ menuId, name, category, shot, syrup, unitPrice, quantity }) => ({ menuId, name, category, shot, syrup, unitPrice, quantity })),
           total: state.cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
         };
         update((next) => {
@@ -593,6 +627,11 @@
           const order = next.orders.find((entry) => entry.id === target.dataset.complete);
           if (order && order.status === "preparing") order.status = "done";
         }, "제조 완료로 변경했어요.");
+        if (target.dataset.dismissOrder) update((next) => {
+          if (!next.customerDismissedOrderIds.includes(target.dataset.dismissOrder)) {
+            next.customerDismissedOrderIds.push(target.dataset.dismissOrder);
+          }
+        });
         if (target.dataset.prepare) update((next) => {
           const order = next.orders.find((entry) => entry.id === target.dataset.prepare);
           if (order && order.status === "pending") order.status = "preparing";
@@ -606,7 +645,7 @@
       try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored === null) {
-          state = { menus: initialMenus, cart: [], orders: [], customerOrderIds: [] };
+          state = { menus: initialMenus, cart: [], orders: [], customerOrderIds: [], customerDismissedOrderIds: [] };
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         } else {
           state = restoreState(JSON.parse(stored));
